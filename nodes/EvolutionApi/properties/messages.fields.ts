@@ -784,6 +784,23 @@ export const messagesFields: INodeProperties[] = [
 		},
 	},
 	{
+		displayName: 'Selectable Count',
+		name: 'selectableCount',
+		type: 'number',
+		default: 1,
+		required: true,
+		description: 'Number of options that can be selected (1 for single choice, more for multiple choice). Cannot exceed the number of poll options.',
+		typeOptions: {
+			minValue: 1,
+		},
+		displayOptions: {
+			show: {
+				resource: ['messages-api'],
+				operation: ['send-poll'],
+			},
+		},
+	},
+	{
 		displayName: 'Minimum 2 options, Maximum 12. Each option must be unique.',
 		name: 'notice',
 		type: 'notice',

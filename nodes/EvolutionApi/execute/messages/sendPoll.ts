@@ -12,6 +12,7 @@ export async function sendPoll(ef: IExecuteFunctions) {
 		const instanceName = ef.getNodeParameter('instanceName', 0);
 		const remoteJid = ef.getNodeParameter('remoteJid', 0);
 		const pollTitle = ef.getNodeParameter('caption', 0);
+		const selectableCount = ef.getNodeParameter('selectableCount', 0) as number;
 		const options = ef.getNodeParameter('options_display.metadataValues', 0) as {
 			optionValue: string;
 		}[];
@@ -45,10 +46,13 @@ export async function sendPoll(ef: IExecuteFunctions) {
 			};
 		}
 
+		// Validate selectableCount does not exceed number of options
+		const validatedSelectableCount = Math.min(selectableCount, pollOptions.length);
+
 		const body: any = {
 			number: remoteJid,
 			name: pollTitle,
-			selectableCount: 1,
+			selectableCount: validatedSelectableCount,
 			values: pollOptions,
 		};
 

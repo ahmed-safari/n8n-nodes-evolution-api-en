@@ -426,7 +426,8 @@ export const messagesFields: INodeProperties[] = [
 										mentionsEveryOne: [false],
 									},
 								},
-								description: 'Enter the numbers you want to mention separated by commas (ex: 5511999999999,5511888888888)',
+								description:
+									'Enter the numbers you want to mention separated by commas (ex: 5511999999999,5511888888888)',
 							},
 						],
 					},
@@ -725,7 +726,8 @@ export const messagesFields: INodeProperties[] = [
 										mentionsEveryOne: [false],
 									},
 								},
-								description: 'Enter the numbers you want to mention separated by commas (ex: 5511999999999,5511888888888)',
+								description:
+									'Enter the numbers you want to mention separated by commas (ex: 5511999999999,5511888888888)',
 							},
 						],
 					},
@@ -789,7 +791,8 @@ export const messagesFields: INodeProperties[] = [
 		type: 'number',
 		default: 1,
 		required: true,
-		description: 'Number of options that can be selected (1 for single choice, more for multiple choice). Cannot exceed the number of poll options.',
+		description:
+			'Number of options that can be selected (1 for single choice, more for multiple choice). Cannot exceed the number of poll options.',
 		typeOptions: {
 			minValue: 1,
 		},
@@ -805,6 +808,31 @@ export const messagesFields: INodeProperties[] = [
 		name: 'notice',
 		type: 'notice',
 		default: '',
+		displayOptions: {
+			show: {
+				resource: ['messages-api'],
+				operation: ['send-poll'],
+			},
+		},
+	},
+	{
+		displayName: 'Options Input Type',
+		name: 'optionsInputType',
+		type: 'options',
+		default: 'manual',
+		description: 'Choose how to input poll options',
+		options: [
+			{
+				name: 'Manual',
+				value: 'manual',
+				description: 'Add each option individually',
+			},
+			{
+				name: 'Array',
+				value: 'array',
+				description: 'Provide options as a comma-separated list or JSON array',
+			},
+		],
 		displayOptions: {
 			show: {
 				resource: ['messages-api'],
@@ -840,6 +868,23 @@ export const messagesFields: INodeProperties[] = [
 			show: {
 				resource: ['messages-api'],
 				operation: ['send-poll'],
+				optionsInputType: ['manual'],
+			},
+		},
+	},
+	{
+		displayName: 'Poll Options (Array)',
+		name: 'optionsArray',
+		type: 'string',
+		default: '',
+		required: true,
+		description:
+			'Enter poll options as comma-separated values (e.g., "Option 1, Option 2, Option 3") or as a JSON array (e.g., ["Option 1", "Option 2"])',
+		displayOptions: {
+			show: {
+				resource: ['messages-api'],
+				operation: ['send-poll'],
+				optionsInputType: ['array'],
 			},
 		},
 	},
@@ -920,7 +965,8 @@ export const messagesFields: INodeProperties[] = [
 										mentionsEveryOne: [false],
 									},
 								},
-								description: 'Enter the numbers you want to mention separated by commas (ex: 5511999999999,5511888888888)',
+								description:
+									'Enter the numbers you want to mention separated by commas (ex: 5511999999999,5511888888888)',
 							},
 						],
 					},
@@ -1205,7 +1251,8 @@ export const messagesFields: INodeProperties[] = [
 										mentionsEveryOne: [false],
 									},
 								},
-								description: 'Enter the numbers you want to mention separated by commas (ex: 5511999999999,5511888888888)',
+								description:
+									'Enter the numbers you want to mention separated by commas (ex: 5511999999999,5511888888888)',
 							},
 						],
 					},
@@ -1459,20 +1506,20 @@ export const messagesFields: INodeProperties[] = [
 										type: 'string',
 										default: '',
 										description: 'Unique ID of the option',
-									}
-								]
-							}
-						]
-					}
-				]
-			}
+									},
+								],
+							},
+						],
+					},
+				],
+			},
 		],
 		displayOptions: {
 			show: {
 				resource: ['messages-api'],
 				operation: ['send-list'],
 			},
-		}
+		},
 	},
 	{
 		displayName: 'Options',
@@ -1551,7 +1598,8 @@ export const messagesFields: INodeProperties[] = [
 										mentionsEveryOne: [false],
 									},
 								},
-								description: 'Enter the numbers you want to mention separated by commas (ex: 5511999999999,5511888888888)',
+								description:
+									'Enter the numbers you want to mention separated by commas (ex: 5511999999999,5511888888888)',
 							},
 						],
 					},
@@ -1934,5 +1982,5 @@ export const messagesFields: INodeProperties[] = [
 				operation: ['send-reaction'],
 			},
 		},
-	}
+	},
 ];

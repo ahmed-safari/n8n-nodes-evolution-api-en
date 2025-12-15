@@ -13,9 +13,7 @@ export async function sendPoll(ef: IExecuteFunctions) {
 		const remoteJid = ef.getNodeParameter('remoteJid', 0);
 		const pollTitle = ef.getNodeParameter('caption', 0);
 		const selectableCount = ef.getNodeParameter('selectableCount', 0) as number;
-		const options = ef.getNodeParameter('options_display.metadataValues', 0) as {
-			optionValue: string;
-		}[];
+		const optionsInputType = ef.getNodeParameter('optionsInputType', 0) as string;
 
 		// Opções adicionais
 		const options_message = ef.getNodeParameter('options_message', 0, {}) as {
@@ -27,15 +25,87 @@ export async function sendPoll(ef: IExecuteFunctions) {
 			};
 		};
 
-		// Verifica se options é um array e não está vazio
-		const pollOptions = Array.isArray(options) ? options.map((option) => option.optionValue) : [];
+		// Get poll options based on input type
+		let pollOptions: string[] = [];
 
-		if (pollOptions.length === 0) {
+		if (optionsInputType === 'array') {
+			const optionsArrayInput = ef.getNodeParameter('optionsArray', 0);
+
+			if (optionsArrayInput) {
+				// Handle if it's already an array (from expression)
+				if (Array.isArray(optionsArrayInput)) {
+					pollOptions = optionsArrayInput
+						.map((item: any) => String(item).trim())
+						.filter((item: string) => item !== '');
+				} else {
+					// Handle as string
+					const trimmedInput = String(optionsArrayInput).trim();
+
+					// Try to parse as JSON array first
+					if (trimmedInput.startsWith('[')) {
+						try {
+							const parsed = JSON.parse(trimmedInput);
+							if (Array.isArray(parsed)) {
+								pollOptions = parsed
+									.map((item: any) => String(item).trim())
+									.filter((item: string) => item !== '');
+							}
+						} catch (e) {
+							// If JSON parsing fails, treat as comma-separated
+							pollOptions = trimmedInput
+								.split(',')
+								.map((item: string) => item.trim())
+								.filter((item: string) => item !== '');
+						}
+					} else {
+						// Treat as comma-separated values
+						pollOptions = trimmedInput
+							.split(',')
+							.map((item: string) => item.trim())
+							.filter((item: string) => item !== '');
+					}
+				}
+			}
+		} else {
+			// Manual input mode
+			const options = ef.getNodeParameter('options_display.metadataValues', 0) as {
+				optionValue: string;
+			}[];
+			pollOptions = Array.isArray(options)
+				? options.map((option) => option.optionValue).filter((item: string) => item !== '')
+				: [];
+		}
+
+		// Remove duplicates
+		pollOptions = [...new Set(pollOptions)];
+
+		// Validate minimum 2 options
+		if (pollOptions.length < 2) {
 			const errorData = {
 				success: false,
 				error: {
-					message: 'Opções da enquete inválidas',
-					details: 'A enquete precisa ter pelo menos uma opção',
+					message: 'Invalid poll options',
+					details: 'Poll must have at least 2 options',
+					code: 'INVALID_POLL_OPTIONS',
+					timestamp: new Date().toISOString(),
+				},
+			};
+			return {
+				json: errorData,
+				error: errorData,
+			};
+		}
+
+		// Validate maximum 12 options
+		if (pollOptions.length > 12) {
+			const errorData = {
+				success: false,
+				error: {
+					message: 'Invalid poll options',
+					details:
+						'Poll cannot have more than 12 options. You provided ' +
+						pollOptions.length +
+						' options.',
 					code: 'INVALID_POLL_OPTIONS',
 					timestamp: new Date().toISOString(),
 				},
